@@ -1,0 +1,15 @@
+from scapy.all import sniff, IP, TCP, UDP
+
+def packet_callback(packet):
+    print(f"Packet: {packet.summary()}")
+    if IP in packet:
+        ip_layer = packet[IP]
+        print(f"\n[+] IP Packet\n    Source IP: {ip_layer.src}\n    Destination IP: {ip_layer.dst}")
+        if TCP in packet:
+            tcp_layer = packet[TCP]
+            print(f"\n    [+] TCP Segment\n        Source Port: {tcp_layer.sport}\n        Destination Port: {tcp_layer.dport}\n        Flags: {tcp_layer.flags}")
+        if UDP in packet:
+            udp_layer = packet[UDP]
+            print(f"\n    [+] UDP Datagram\n        Source Port: {udp_layer.sport}\n        Destination Port: {udp_layer.dport}")
+
+sniff(iface="eth0", prn=packet_callback, count=10)
